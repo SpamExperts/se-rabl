@@ -8,11 +8,11 @@ with open('README.md') as readme_file:
 
 requirements = [
     "MySQL-python==1.2.5",
-    "dnspython==1.12.0",
+    "dnspython==1.15.0",
     "idna==2.1",
     "ipaddr==2.1.11",
-    "psutil==2.1.3",
-    "raven==5.24.3",
+    "psutil==4.3.1",
+    "raven==5.27.1",
 ]
 
 test_requirements = [
