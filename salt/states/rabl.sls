@@ -14,6 +14,7 @@ basic-install:
       - openssl
       - binutils
       - libc6
+      - gcc
 
 broken_python_modules:
   pkg.purged:
@@ -44,6 +45,9 @@ mariadb-server:
       - mariadb-server
       - mariadb-client
       - libmariadb-client-lgpl-dev
+  file.symlink:
+    - name: /usr/bin/mysql_config
+    - target: /usr/bin/mariadb_config
   service:
     - running
     - name: mysql
