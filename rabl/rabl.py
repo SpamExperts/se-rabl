@@ -48,7 +48,7 @@ def load_configuration():
     defaults = {
         "mysql": {
             "host": "localhost",
-            "db": "",
+            "db": "dnsbl",
             "user": "rabl",
             "password": "",
         },
