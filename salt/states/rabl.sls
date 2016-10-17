@@ -43,7 +43,7 @@ mariadb-server:
     - pkgs:
       - mariadb-server
       - mariadb-client
-      - libmariadbclient-dev
+      - libmariadb-client-lgpl-dev
   service:
     - running
     - name: mysql
