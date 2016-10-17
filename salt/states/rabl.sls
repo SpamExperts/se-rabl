@@ -117,3 +117,36 @@ rabl-pre-install:
     - name: setuptools
     - upgrade: True
     - bin_env: /var/cache/se-rabl-env/bin/pip
+
+rabl-requirements:
+  pip.installed:
+    - requirements: /var/cache/se-rabl/requirements.txt
+    - bin_env: /var/cache/se-rabl-env/bin/pip
+    - upgrade: True
+
+# Configure PDNS-recursor
+pdns-recursor:
+  pkg:
+    - latest
+    - pkgs:
+      - pdns-recursor
+  service.running:
+    - name: pdns-recursor
+    - enable: True
+
+rabl-service:
+  file.managed:
+    - name: /etc/init.d/rabl
+    - source: salt://init.d
+    - template: jinja
+  cmd.run:
+    - name: "update-rc.d rabl defaults"
+
+rabl-service-start:
+  cmd.run:
+    - name: "service rabl restart"
+
+
+# Do a final upgrade of various packages
+uptodate:
+  pkg.uptodate: []
