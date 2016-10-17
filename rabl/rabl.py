@@ -25,15 +25,8 @@ a small number of reports from many different sources.
 from __future__ import absolute_import
 
 import os
-import sys
-import time
-import json
-import shutil
-import socket
 import logging
 import optparse
-import datetime
-import tempfile
 import ConfigParser
 import SocketServer
 
@@ -45,7 +38,6 @@ import MySQLdb
 
 import raven
 import raven.transport
-from raven.contrib.flask import Sentry
 from raven.handlers.logging import SentryHandler
 
 
@@ -171,70 +163,6 @@ class RABLServer(SocketServer.UDPServer):
         SocketServer.UDPServer.__init__(self, address, self.handler_class)
 
 
-def write_zones(fmt, filename, template, table_name, debug=False):
-    """Output a bind/rbldnsd zone file.
-
-    Also handles expiry."""
-    if fmt == "bind":
-        fmt = lambda ip: "%s\t\tIN\tA\t127.0.0.2\n" % \
-            (".".join(reversed(ip.split('.'))),)
-    elif fmt == "rbldnsd":
-        fmt = lambda ip: ip + "\n"
-    else:
-        assert False, "Unknown zone file format: %s" % fmt
-    # We write to a temporary file and then do an atomic move to the correct
-    # name, so that if something is currently accessing the file we never
-    # have it truncated.
-    fd, tempname = tempfile.mkstemp("rabl")
-    os.close(fd)
-    fout = open(tempname, "w")
-    if template:
-        if debug:
-            print "Reading zone template from", template
-        with open(template) as templatef:
-            for line in templatef:
-                line = line.replace("@serial@", str(int(time.time())))
-                fout.write(line)
-    # 127.0.0.2 is always spam (this is the test address).
-    total = 2
-    fout.write(fmt("127.0.0.2"))
-    # XXX This doesn't work properly at the moment.  The lists are
-    # XXX configured as ip4tset, which means that these are IP addresses in
-    # XXX natural format, but we are mixing that with "generic", which is
-    # XXX hostnames (for the IPv6) addresses.  We need to make them all
-    # XXX "generic", which means reversing the IPv4 addresses, or split the
-    # XXX IPv4 and IPv6 into two separate lists.
-    fout.write(fmt("2.0.0.0.0.0.f.7.f.f.f.f."
-                   "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0"))
-    db = MySQLdb.connect(host=CONF.get("mysql", "host"),
-                         user=CONF.get("mysql", "user"),
-                         passwd=CONF.get("mysql", "password"),
-                         db=CONF.get("mysql", "db"),
-                         connect_timeout=60)
-    c = db.cursor()
-    c.execute("DELETE FROM `%s` WHERE spam_count < 1 OR last_seen < %%s" %
-              table_name, (datetime.datetime.now() -
-                           datetime.timedelta(seconds=LIFE[table_name]),))
-    db.commit()
-    c.execute("SELECT ip FROM `%s` GROUP BY ip HAVING COUNT(*) > %%s" %
-              table_name, (MINSPREAD[table_name],))
-    for row in c.fetchall():
-        ip = row[0]
-        if ip in ("127.0.0.1", "0.0.0.0", "::1"):
-            # These are permanently whitelisted.
-            continue
-        fout.write(fmt(ip))
-        total += 1
-    c.close()
-    db.close()
-    fout.close()
-    # Rename to the final location - the OS should ensure that this is
-    # atomic.
-    shutil.move(tempname, filename)
-    if debug:
-        print "Wrote %s blacklisted addresses to zone file." % total
-
-
 def main():
     """Parse command-line options and execute requested actions."""
     description = "Reactive Autonomous Black List"
@@ -248,15 +176,6 @@ def main():
                    "ionice class 1 and 2")
     opt.add_option("-p", "--port", dest="port", type="int",
                    help="port to listen on for UDP reports", default=61382)
-    opt.add_option("--list", dest="table_name",
-                   help="name of list to output (rabl-automatic, "
-                   "rabl-reported, rabl-verified)",
-                   default="rabl-verified")
-    opt.add_option("--zone-file", dest="zone_file",
-                   help="filename for zone file",
-                   default="/var/lib/rbldns/se-rabl.spamrl.com")
-    opt.add_option("--zone-template", dest="zone_template",
-                   help="filename for zone template", default=None)
     opt.add_option("-d", "--debug", action="store_true", default=False,
                    dest="debug", help="enable debugging output")
     options = opt.parse_args()[0]
@@ -264,11 +183,6 @@ def main():
     if options.ionice is not None:
         proc = psutil.Process(os.getpid())
         proc.set_ionice(options.ionice, options.ionice_prio)
-
-    if options.debug:
-        print "Writing zone file in rblsdns format."
-    write_zones("rbldnsd", options.zone_file, options.zone_template,
-                options.table_name, debug=options.debug)
 
     logger = logging.getLogger("rabl")
     logger.setLevel(logging.DEBUG)
