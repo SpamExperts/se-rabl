@@ -164,10 +164,10 @@ class RABLServer(spoon.UDPSpork):
     """A simple server that handles RABL updates."""
     handler_klass = RequestHandler
 
-	def load_config(self):
-		"""Reload the configuration."""
-		global CONF
-		CONF = load_configuration()
+    def load_config(self):
+        """Reload the configuration."""
+        global CONF
+        CONF = load_configuration()
 
 
 def main():
