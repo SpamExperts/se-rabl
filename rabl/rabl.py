@@ -56,6 +56,12 @@ def load_configuration():
             # Reports from this IP may specify the original source of the
             # report.
             "trusted_ip": "",
+            "trusted_table": "rabl-verified",
+            # Reports that are not from the trusted IP but have a
+            # specified reporter go to this table.
+            "claimed_table": "rabl-reported",
+            # Other reports go to this table.
+            "standard_table": "rabl-automatic",
         },
         "sentry": {
             "dsn": "",
@@ -103,17 +109,17 @@ class RequestHandler(spoon.UDPGulp):
         reporter = ipaddr.IPAddress(self.client_address[0])
 
         if reporter == CONF.get("rabl", "trusted_ip"):
-            table_name = "rabl-verified"
+            table_name = CONF.get("rabl", "trusted_table")
             # This IP is permitted to claim the report is from other IPs.
             reporter = ipaddr.IPAddress(claimed_reporter)
         # If the report has a claimed reporter, then this has been
         # reported by a human, so may be able to be trusted more.
         elif claimed_reporter:
-            table_name = "rabl-reported"
+            table_name = CONF.get("rabl", "claimed_table")
         # Otherwise, this must be an automatic detection, and can't be
         # trusted.
         else:
-            table_name = "rabl-automatic"
+            table_name = CONF.get("rabl", "standard_table")
         # Calculate the change in count.
         if is_spam:
             diff = 1
@@ -193,7 +199,6 @@ def main():
     common.setup_logging(logger, "/var/log/rabl_server.log",
                          CONF.get("sentry", "dsn"),
                          stream_level=stream_level)
-
 	
     server = RABLServer(("", options.port))
     spoon.daemon.run_daemon(server, "/var/run/rabl_server.pid")
