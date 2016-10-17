@@ -12,7 +12,7 @@ SpamExperts implementation of the RABL system
 
 To install the server, follow these steps.
 
- * Install git: `apt-get install git`
+ * Install git: `apt-get update && apt-get install git`
  * Install salt-minion using [bootstrap](https://docs.saltstack.com/en/latest/topics/tutorials/salt_bootstrap.html)
  * Generate a ssh key with `ssh-keygen`
  * Authorise the key to access the repository on github.
