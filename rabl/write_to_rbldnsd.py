@@ -2,24 +2,8 @@
 
 """Reactive Autonomous Blackhole List Server
 
-The concept is based on the original rabl.nuclearelephant.com RABL, but
-the code is completely independent (and not at all compatible).
-
-Unfortunately, the original documentation for RABL is not available any
-more, so cannot be linked to here.
-
-Essentially, the concept is that this is a DNSBL that is:
-
- * Reactive: entries are added/removed in response to events
- * Autonomous: everything is automatic (no manual listing/de-listing)
-
-Entries on the list automatically expire after no new reports have been
-received for a period of time.
-
-In order to be listed, the IP must have been reported as a spam source
-by a set number of different reporters ('spread'). The intent is that
-a large number of reports from a single source is not as important as
-a small number of reports from many different sources.
+General a zone file suitable for use with rbldnsd from the
+data collected by the RABL server.
 """
 
 from __future__ import absolute_import
