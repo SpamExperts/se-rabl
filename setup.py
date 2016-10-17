@@ -13,6 +13,7 @@ requirements = [
     "ipaddr==2.1.11",
     "psutil==4.3.1",
     "raven==5.27.1",
+    "spoon==1.0.5",
 ]
 
 test_requirements = [
