@@ -36,6 +36,9 @@ import psutil
 
 import MySQLdb
 
+import spoon.server
+import spoon.daemon
+
 import common
 
 
@@ -72,7 +75,7 @@ def load_configuration():
 CONF = load_configuration()
 
 
-class RequestHandler(SocketServer.DatagramRequestHandler):
+class RequestHandler(spoon.UDPGulp):
     """Handle a single request."""
     def handle(self):
         """Handle a single incoming connection."""
@@ -151,14 +154,14 @@ class RequestHandler(SocketServer.DatagramRequestHandler):
                     reporter, is_spam)
 
 
-class RABLServer(SocketServer.UDPServer):
+class RABLServer(spoon.UDPSpork):
     """A simple server that handles RABL updates."""
-    handler_class = RequestHandler
+    handler_klass = RequestHandler
 
-    def __init__(self, address):
-        logger = logging.getLogger("rabl")
-        logger.debug("Listening on %s", address)
-        SocketServer.UDPServer.__init__(self, address, self.handler_class)
+	def load_config(self):
+		"""Reload the configuration."""
+		global CONF
+		CONF = load_configuration()
 
 
 def main():
@@ -191,12 +194,9 @@ def main():
                          CONF.get("sentry", "dsn"),
                          stream_level=stream_level)
 
-    daemonize(
-        stdout="/var/log/rabl_server.out",
-        pidfile="/var/run/rabl_server.pid",
-        startmsg="%s")
+	
     server = RABLServer(("", options.port))
-    server.serve_forever()
+    spoon.daemon.run_daemon(server, "/var/run/rabl_server.pid")
 
 
 if __name__ == "__main__":
