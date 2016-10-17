@@ -1,0 +1,17 @@
+# Configure salt-minion. This is configured to run locally
+# for now.
+
+file_client: local
+
+file_roots:
+  base:
+    - /var/cache/se-rabl/salt/
+    - /var/cache/se-rabl/salt/states
+
+pillar_roots:
+    base:
+      - /var/cache/se-rabl/salt/pillar
+
+state_output: mixed
+log_level: info
+failhard: true
