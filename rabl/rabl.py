@@ -79,7 +79,7 @@ def load_configuration():
 CONF = load_configuration()
 
 
-class RequestHandler(spoon.UDPGulp):
+class RequestHandler(spoon.server.UDPGulp):
     """Handle a single request."""
     def handle(self):
         """Handle a single incoming connection."""
@@ -158,7 +158,7 @@ class RequestHandler(spoon.UDPGulp):
                     reporter, is_spam)
 
 
-class RABLServer(spoon.UDPSpork):
+class RABLServer(spoon.server.UDPSpork):
     """A simple server that handles RABL updates."""
     handler_klass = RequestHandler
     server_logger = "rabl"
