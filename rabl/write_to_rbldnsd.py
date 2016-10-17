@@ -20,9 +20,7 @@ import psutil
 
 import MySQLdb
 
-import raven
-import raven.transport
-from raven.handlers.logging import SentryHandler
+import common
 
 
 def load_configuration():
@@ -139,25 +137,14 @@ def main():
         proc = psutil.Process(os.getpid())
         proc.set_ionice(options.ionice, options.ionice_prio)
 
-	logger = logging.getLogger("rabl")
-    logger.setLevel(logging.DEBUG)
+    logger = logging.getLogger("rabl")
     if options.debug:
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.DEBUG)
+        stream_level = "DEBUG"
     else:
-        handler = logging.FileHandler("/var/log/rabl.log")
-        handler.setLevel(logging.WARNING)
-    if CONF.get("sentry", "dsn"):
-        client = raven.Client(CONF.get("sentry", "dsn"),
-                              transport=raven.transport.HTTPTransport)
-        sentry_handler = SentryHandler(client)
-        sentry_handler.setLevel(logging.WARNING)
-        logger.addHandler(sentry_handler)
-        sentry_internal = logging.getLogger("sentry.errors")
-        sentry_internal.addHandler(sentry_handler)
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s %(message)s'))
-    logger.addHandler(handler)
+        stream_level = "CRITICAL"
+    common.setup_logging(logger, "/var/log/rabl.log",
+                         CONF.get("sentry", "dsn"),
+                         stream_level=stream_level)
 
     write_zone(options.zone_file, options.table_name, options.life,
                options.minspread)
