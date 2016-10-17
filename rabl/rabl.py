@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 """Reactive Autonomous Blackhole List Server
 
 The concept is based on the original rabl.nuclearelephant.com RABL, but
@@ -163,46 +161,17 @@ class RequestHandler(spoon.UDPGulp):
 class RABLServer(spoon.UDPSpork):
     """A simple server that handles RABL updates."""
     handler_klass = RequestHandler
+    server_logger = "rabl"
+    command_line_defaults = {
+      "port": 61382,
+      "interface": "",
+      "pid_file": "/var/run/rabl_server.pid",
+      "log_file": "/var/log/rabl_server.log",
+      "sentry_dsn": CONF.get("sentry", "dsn"),
+      "spork": 12,
+    }
 
     def load_config(self):
         """Reload the configuration."""
         global CONF
         CONF = load_configuration()
-
-
-def main():
-    """Parse command-line options and execute requested actions."""
-    description = "Reactive Autonomous Black List"
-    opt = optparse.OptionParser(description=description)
-    opt.add_option("-n", "--nice", dest="nice", type="int",
-                   help="'nice' level", default=0)
-    opt.add_option("-i", "--ionice", dest="ionice", type="int",
-                   help="'ionice' level, can be one of this 0,1,2,3")
-    opt.add_option("--ionice-prio", dest="ionice_prio", type="int",
-                   help="'ionice' class priority, this goes from 0 to 7 on "
-                   "ionice class 1 and 2")
-    opt.add_option("-p", "--port", dest="port", type="int",
-                   help="port to listen on for UDP reports", default=61382)
-    opt.add_option("-d", "--debug", action="store_true", default=False,
-                   dest="debug", help="enable debugging output")
-    options = opt.parse_args()[0]
-    os.nice(options.nice)
-    if options.ionice is not None:
-        proc = psutil.Process(os.getpid())
-        proc.set_ionice(options.ionice, options.ionice_prio)
-
-    logger = logging.getLogger("rabl")
-    if options.debug:
-        stream_level = "DEBUG"
-    else:
-        stream_level = "CRITICAL"
-    common.setup_logging(logger, "/var/log/rabl_server.log",
-                         CONF.get("sentry", "dsn"),
-                         stream_level=stream_level)
-	
-    server = RABLServer(("", options.port))
-    spoon.daemon.run_daemon(server, "/var/run/rabl_server.pid")
-
-
-if __name__ == "__main__":
-    main()

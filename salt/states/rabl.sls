@@ -136,15 +136,11 @@ pdns-recursor:
 
 rabl-service:
   file.managed:
-    - name: /etc/init.d/rabl
-    - source: salt://init.d
-    - template: jinja
-  cmd.run:
-    - name: "update-rc.d rabl defaults"
-
-rabl-service-start:
-  cmd.run:
-    - name: "service rabl restart"
+    - name: /etc/systemd/system/rabl.service
+    - source: salt://rabl.service
+  service.running:
+    - name: rabl
+    - enable: True
 
 
 # Do a final upgrade of various packages
