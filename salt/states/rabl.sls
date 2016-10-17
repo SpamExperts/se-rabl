@@ -48,6 +48,9 @@ mariadb-server:
   file.symlink:
     - name: /usr/bin/mysql_config
     - target: /usr/bin/mariadb_config
+  file.symlink:
+    - name: /var/run/mysqld/mysqld.sock
+    - target: /tmp/mysql.sock
   service:
     - running
     - name: mysql
