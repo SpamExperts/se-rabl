@@ -7,9 +7,9 @@ Type=forking
 User=root
 Group=root
 Environment="PYTHONPATH=/var/cache/se-rabl/rabl/"
-ExecStart=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 url_server.ReportServer start
-ExecReload=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 url_server.ReportServer reload
-ExecStop=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 url-server.ReportServer stop
+ExecStart=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 rabl.RABLServer start
+ExecReload=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 rabl.RABLServer reload
+ExecStop=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 rabl.RABLServer stop
 KillMode=mixed
 TimeoutStopSec=3
 PIDFile=/var/run/rabl_server.pid
