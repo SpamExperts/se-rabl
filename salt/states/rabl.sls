@@ -48,9 +48,6 @@ mariadb-server:
   file.symlink:
     - name: /usr/bin/mysql_config
     - target: /usr/bin/mariadb_config
-  file.symlink:
-    - name: /var/run/mysqld/mysqld.sock
-    - target: /tmp/mysql.sock
   service:
     - running
     - name: mysql
@@ -58,6 +55,13 @@ mariadb-server:
     - reload: True
     - require:
       - pkg: mariadb-server
+
+ugly-hack:
+  file.symlink:
+    - require:
+      - mariadb-server
+    - name: /var/run/mysqld/mysqld.sock
+    - target: /tmp/mysql.sock
 
 install-mysqlclient:
   pkg:
