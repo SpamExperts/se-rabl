@@ -17,7 +17,7 @@ To install the server, follow these steps.
  * Generate a ssh key with `ssh-keygen`
  * Authorise the key to access the repository on github.
  * Clone the repository: `git clone git@github.com:SpamExperts/se-rabl.git /var/cache/se-rabl/`
- * Copy the minion configuration: `cp /var/cache/se-rabl//salt/minion /etc/salt/minion`
+ * Copy the minion configuration: `cp /var/cache/se-rabl/salt/minion /etc/salt/minion`
  * Run salt: `salt-call --local state.highstate pillar='{"mysql":{"password":"rootpassword", "rabl_password":"serverpassword"}}'`
 
 If you want to update the server after the first install add the just_update
@@ -25,7 +25,7 @@ flag:
 
 ```
     git -C /var/cache/se-rabl pull
-    salt-call --local state.highstate pillar='{"mysql":{"password":"rootpassword", "rabl_password":"serverpassword"},just_update:true}'
+    salt-call --local state.highstate pillar='{"mysql":{"password":"rootpassword", "rabl_password":"serverpassword"},"just_update":true}'
 ```
 
 Features
