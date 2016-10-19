@@ -3,5 +3,5 @@ dnspython==1.15.0
 idna==2.1
 ipaddr==2.1.11
 psutil==4.3.1
-raven==5.29.0
+raven==5.30.0
 spoon==1.0.5
