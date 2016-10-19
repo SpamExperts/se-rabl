@@ -24,7 +24,7 @@ If you want to update the server after the first install add the just_update
 flag:
 
 ```
-    git -C /var/cache/se-packages pull
+    git -C /var/cache/se-rabl pull
     salt-call --local state.highstate pillar='{"mysql":{"password":"rootpassword", "rabl_password":"serverpassword"},just_update:true}'
 ```
 
