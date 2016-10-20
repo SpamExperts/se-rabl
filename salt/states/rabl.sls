@@ -152,6 +152,8 @@ rabl-service:
   service.running:
     - name: rabl
     - enable: True
+    - requires:
+    	- ugly-hack
 
 
 # Do a final upgrade of various packages
