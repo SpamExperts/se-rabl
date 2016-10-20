@@ -25,7 +25,7 @@ flag:
 
 ```
     git -C /var/cache/se-packages pull
-    salt-call --local state.highstate pillar='{"mysql":{"password":"rootpassword", "rabl_password":"serverpassword"},just_update:true}'
+    salt-call --local state.highstate pillar='{just_update:true}'
 ```
 
 Features
