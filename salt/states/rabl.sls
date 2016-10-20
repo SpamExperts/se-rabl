@@ -153,7 +153,7 @@ rabl-service:
     - name: rabl
     - enable: True
     - require:
-    	- ugly-hack
+        - ugly-hack
 
 
 # Do a final upgrade of various packages
