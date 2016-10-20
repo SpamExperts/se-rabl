@@ -152,7 +152,7 @@ rabl-service:
   service.running:
     - name: rabl
     - enable: True
-    - requires:
+    - require:
     	- ugly-hack
 
 
