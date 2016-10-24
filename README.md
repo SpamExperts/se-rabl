@@ -25,7 +25,7 @@ flag:
 
 ```
     git -C /var/cache/se-rabl pull
-    salt-call --local state.highstate pillar='{just_update:true}'
+    salt-call --local state.highstate pillar='{"just_update":true}'
 ```
 
 Features
