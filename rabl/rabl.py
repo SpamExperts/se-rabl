@@ -32,7 +32,7 @@ import ipaddr
 
 import psutil
 
-import MySQLdb
+import pymysql
 
 import spoon.server
 import spoon.daemon
@@ -130,12 +130,12 @@ class RequestHandler(spoon.server.UDPGulp):
         logger = logging.getLogger("rabl")
         # XXX It might be better to queue these and do them in a batch.
         try:
-            db = MySQLdb.connect(host=CONF.get("mysql", "host"),
+            db = pymysql.connect(host=CONF.get("mysql", "host"),
                                  user=CONF.get("mysql", "user"),
                                  passwd=CONF.get("mysql", "password"),
                                  db=CONF.get("mysql", "db"),
                                  connect_timeout=60)
-        except MySQLdb.Error as e:
+        except pymysql.Error as e:
             logger.error("Unable to connect to database: %s", e)
             return
         c = db.cursor()
@@ -148,7 +148,7 @@ class RequestHandler(spoon.server.UDPGulp):
                       "(%%s, %%s, %%s) ON DUPLICATE KEY UPDATE "
                       "spam_count=spam_count+%%s" % table_name,
                       (str(address), str(reporter), diff, diff))
-        except MySQLdb.Error as e:
+        except pymysql.Error as e:
             logger.error("Unable to update RABL: %s", e)
         else:
             db.commit()

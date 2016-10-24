@@ -56,22 +56,6 @@ mariadb-server:
     - require:
       - pkg: mariadb-server
 
-ugly-hack:
-  file.symlink:
-    - require:
-      - mariadb-server
-    - name: /var/run/mysqld/mysqld.sock
-    - target: /tmp/mysql.sock
-
-install-mysqlclient:
-  pkg:
-    - latest
-    - pkgs:
-        - python-dev
-  pip.installed:
-    - name: mysqlclient
-    - upgrade: True
-
 {%- if not pillar.get('just_update') %}
 configure-root-user:
   file.managed:
@@ -152,8 +136,6 @@ rabl-service:
   service.running:
     - name: rabl
     - enable: True
-    - require:
-        - ugly-hack
 
 
 # Do a final upgrade of various packages
