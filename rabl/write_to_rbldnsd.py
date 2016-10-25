@@ -51,6 +51,21 @@ def load_configuration():
 CONF = load_configuration()
 
 
+def get_temporary_location(filename):
+    """Return an appropriate temporary location to store the file.
+    
+    We use a temp folder within the final destination so that the copy
+    should be atomic and so that we're using the same disk (e.g. taking
+    advantage of the same speed, etc).
+    """
+    fd, tempname = tempfile.mkstemp("sebl")
+    os.close(fd)
+    tmp_folder = os.path.join(os.path.dirname(filename), "tmp")
+    if not os.path.exists(tmp_folder):
+        os.makedirs(tmp_folder)
+    return os.path.join(tmp_folder, os.path.basename(tempname))
+
+
 def write_zone(filename, table_name, life, minspread):
     """Output a rbldnsd zone file.
 
@@ -59,8 +74,7 @@ def write_zone(filename, table_name, life, minspread):
     # We write to a temporary file and then do an atomic move to the correct
     # name, so that if something is currently accessing the file we never
     # have it truncated.
-    fd, tempname = tempfile.mkstemp("rabl")
-    os.close(fd)
+    tempname = get_temporary_location(filename)
     logger.debug("Writing list to %s", tempname)
     with open(tempname, "w") as fout:
         # 127.0.0.2 is always spam (this is the test address).
