@@ -15,6 +15,7 @@ basic-install:
       - binutils
       - libc6
       - gcc
+      - python-dev
 
 broken_python_modules:
   pkg.purged:
