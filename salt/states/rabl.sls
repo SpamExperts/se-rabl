@@ -16,6 +16,7 @@ basic-install:
       - libc6
       - gcc
       - python-dev
+      - wget
 
 broken_python_modules:
   pkg.purged:
