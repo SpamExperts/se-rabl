@@ -46,10 +46,7 @@ mariadb-server:
     - pkgs:
       - mariadb-server
       - mariadb-client
-      - libmariadb-client-lgpl-dev
-  file.symlink:
-    - name: /usr/bin/mysql_config
-    - target: /usr/bin/mariadb_config
+      - libmariadbclient-dev
   service:
     - running
     - name: mysql
