@@ -118,6 +118,17 @@ rabl-requirements:
     - bin_env: /var/cache/se-rabl-env/bin/pip
     - upgrade: True
 
+
+install-rabl:
+  pip.installed:
+    - name: /var/cache/se-rabl/
+    - upgrade: True
+    - bin_env: /var/cache/se-rabl-env/bin/pip
+    - cwd: /var/cache/se-rabl/
+    - watch_in:
+      - service: rabl
+
+
 # Configure PDNS-recursor
 pdns-recursor:
   pkg:
