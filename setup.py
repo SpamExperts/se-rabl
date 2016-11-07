@@ -31,6 +31,9 @@ setup(
     packages=[
         'rabl',
     ],
+    scripts=[
+        "rabl/write_to_rbldnsd.py"
+    ],
     package_dir={'rabl':
                  'rabl'},
     include_package_data=True,
