@@ -53,7 +53,7 @@ CONF = load_configuration()
 
 def get_temporary_location(filename):
     """Return an appropriate temporary location to store the file.
-    
+
     We use a temp folder within the final destination so that the copy
     should be atomic and so that we're using the same disk (e.g. taking
     advantage of the same speed, etc).
