@@ -46,10 +46,7 @@ mariadb-server:
     - pkgs:
       - mariadb-server
       - mariadb-client
-      - libmariadb-client-lgpl-dev
-  file.symlink:
-    - name: /usr/bin/mysql_config
-    - target: /usr/bin/mariadb_config
+      - libmariadbclient-dev
   service:
     - running
     - name: mysql
@@ -120,6 +117,17 @@ rabl-requirements:
     - requirements: /var/cache/se-rabl/requirements.txt
     - bin_env: /var/cache/se-rabl-env/bin/pip
     - upgrade: True
+
+
+install-rabl:
+  pip.installed:
+    - name: /var/cache/se-rabl/
+    - upgrade: True
+    - bin_env: /var/cache/se-rabl-env/bin/pip
+    - cwd: /var/cache/se-rabl/
+    - watch_in:
+      - service: rabl
+
 
 # Configure PDNS-recursor
 pdns-recursor:

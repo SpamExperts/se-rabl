@@ -24,25 +24,22 @@ from __future__ import absolute_import
 
 import os
 import logging
-import optparse
-import ConfigParser
-import SocketServer
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 import ipaddr
-
-import psutil
 
 import pymysql
 
 import spoon.server
 import spoon.daemon
 
-import common
-
 
 def load_configuration():
     """Load server-specific configuration settings."""
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     defaults = {
         "mysql": {
             "host": "localhost",
@@ -66,9 +63,9 @@ def load_configuration():
         },
     }
     # Load in default values.
-    for section, values in defaults.iteritems():
+    for section, values in defaults.items():
         conf.add_section(section)
-        for option, value in values.iteritems():
+        for option, value in values.items():
             conf.set(section, option, value)
     if os.path.exists("/etc/rabl.conf"):
         # Overwrite with local values.

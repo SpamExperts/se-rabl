@@ -14,18 +14,21 @@ import logging
 import optparse
 import datetime
 import tempfile
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 import psutil
 
 import MySQLdb
 
-import common
+import rabl.common
 
 
 def load_configuration():
     """Load server-specific configuration settings."""
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     defaults = {
         "mysql": {
             "host": "localhost",
@@ -38,9 +41,9 @@ def load_configuration():
         },
     }
     # Load in default values.
-    for section, values in defaults.iteritems():
+    for section, values in defaults.items():
         conf.add_section(section)
-        for option, value in values.iteritems():
+        for option, value in values.items():
             conf.set(section, option, value)
     if os.path.exists("/etc/rabl.conf"):
         # Overwrite with local values.
@@ -156,9 +159,9 @@ def main():
         stream_level = "DEBUG"
     else:
         stream_level = "CRITICAL"
-    common.setup_logging(logger, "/var/log/rabl.log",
-                         CONF.get("sentry", "dsn"),
-                         stream_level=stream_level)
+    rabl.common.setup_logging(logger, "/var/log/rabl.log",
+                              CONF.get("sentry", "dsn"),
+                              stream_level=stream_level)
 
     write_zone(options.zone_file, options.table_name, options.life,
                options.minspread)
