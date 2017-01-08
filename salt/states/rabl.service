@@ -1,0 +1,17 @@
+[Unit]
+Description=SpamExperts RABL Server
+After=network.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+ExecStart=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 rabl.rabl.RABLServer start
+ExecReload=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 rabl.rabl.RABLServer reload
+ExecStop=/var/cache/se-rabl-env/bin/python -m spoon.daemon --spork=12 rabl.rabl.RABLServer stop
+KillMode=mixed
+TimeoutStopSec=3
+PIDFile=/var/run/rabl_server.pid
+
+[Install]
+WantedBy=multi-user.target

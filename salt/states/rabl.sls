@@ -14,6 +14,9 @@ basic-install:
       - openssl
       - binutils
       - libc6
+      - gcc
+      - python-dev
+      - wget
 
 broken_python_modules:
   pkg.purged:
@@ -51,15 +54,6 @@ mariadb-server:
     - reload: True
     - require:
       - pkg: mariadb-server
-
-install-mysqlclient:
-  pkg:
-    - latest
-    - pkgs:
-        - python-dev
-  pip.installed:
-    - name: mysqlclient
-    - upgrade: True
 
 {%- if not pillar.get('just_update') %}
 configure-root-user:
@@ -124,6 +118,17 @@ rabl-requirements:
     - bin_env: /var/cache/se-rabl-env/bin/pip
     - upgrade: True
 
+
+install-rabl:
+  pip.installed:
+    - name: /var/cache/se-rabl/
+    - upgrade: True
+    - bin_env: /var/cache/se-rabl-env/bin/pip
+    - cwd: /var/cache/se-rabl/
+    - watch_in:
+      - service: rabl
+
+
 # Configure PDNS-recursor
 pdns-recursor:
   pkg:
@@ -136,15 +141,11 @@ pdns-recursor:
 
 rabl-service:
   file.managed:
-    - name: /etc/init.d/rabl
-    - source: salt://init.d
-    - template: jinja
-  cmd.run:
-    - name: "update-rc.d rabl defaults"
-
-rabl-service-start:
-  cmd.run:
-    - name: "service rabl restart"
+    - name: /etc/systemd/system/rabl.service
+    - source: salt://rabl.service
+  service.running:
+    - name: rabl
+    - enable: True
 
 
 # Do a final upgrade of various packages

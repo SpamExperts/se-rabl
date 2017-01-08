@@ -14,18 +14,21 @@ import logging
 import optparse
 import datetime
 import tempfile
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 import psutil
 
 import MySQLdb
 
-import common
+import rabl.common
 
 
 def load_configuration():
     """Load server-specific configuration settings."""
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     defaults = {
         "mysql": {
             "host": "localhost",
@@ -38,9 +41,9 @@ def load_configuration():
         },
     }
     # Load in default values.
-    for section, values in defaults.iteritems():
+    for section, values in defaults.items():
         conf.add_section(section)
-        for option, value in values.iteritems():
+        for option, value in values.items():
             conf.set(section, option, value)
     if os.path.exists("/etc/rabl.conf"):
         # Overwrite with local values.
@@ -51,6 +54,21 @@ def load_configuration():
 CONF = load_configuration()
 
 
+def get_temporary_location(filename):
+    """Return an appropriate temporary location to store the file.
+
+    We use a temp folder within the final destination so that the copy
+    should be atomic and so that we're using the same disk (e.g. taking
+    advantage of the same speed, etc).
+    """
+    fd, tempname = tempfile.mkstemp("sebl")
+    os.close(fd)
+    tmp_folder = os.path.join(os.path.dirname(filename), "tmp")
+    if not os.path.exists(tmp_folder):
+        os.makedirs(tmp_folder)
+    return os.path.join(tmp_folder, os.path.basename(tempname))
+
+
 def write_zone(filename, table_name, life, minspread):
     """Output a rbldnsd zone file.
 
@@ -59,8 +77,7 @@ def write_zone(filename, table_name, life, minspread):
     # We write to a temporary file and then do an atomic move to the correct
     # name, so that if something is currently accessing the file we never
     # have it truncated.
-    fd, tempname = tempfile.mkstemp("rabl")
-    os.close(fd)
+    tempname = get_temporary_location(filename)
     logger.debug("Writing list to %s", tempname)
     with open(tempname, "w") as fout:
         # 127.0.0.2 is always spam (this is the test address).
@@ -142,9 +159,9 @@ def main():
         stream_level = "DEBUG"
     else:
         stream_level = "CRITICAL"
-    common.setup_logging(logger, "/var/log/rabl.log",
-                         CONF.get("sentry", "dsn"),
-                         stream_level=stream_level)
+    rabl.common.setup_logging(logger, "/var/log/rabl.log",
+                              CONF.get("sentry", "dsn"),
+                              stream_level=stream_level)
 
     write_zone(options.zone_file, options.table_name, options.life,
                options.minspread)

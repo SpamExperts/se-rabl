@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 """Reactive Autonomous Blackhole List Server
 
 The concept is based on the original rabl.nuclearelephant.com RABL, but
@@ -26,25 +24,22 @@ from __future__ import absolute_import
 
 import os
 import logging
-import optparse
-import ConfigParser
-import SocketServer
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 import ipaddr
 
-import psutil
-
-import MySQLdb
+import pymysql
 
 import spoon.server
 import spoon.daemon
 
-import common
-
 
 def load_configuration():
     """Load server-specific configuration settings."""
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     defaults = {
         "mysql": {
             "host": "localhost",
@@ -68,9 +63,9 @@ def load_configuration():
         },
     }
     # Load in default values.
-    for section, values in defaults.iteritems():
+    for section, values in defaults.items():
         conf.add_section(section)
-        for option, value in values.iteritems():
+        for option, value in values.items():
             conf.set(section, option, value)
     if os.path.exists("/etc/rabl.conf"):
         # Overwrite with local values.
@@ -81,7 +76,7 @@ def load_configuration():
 CONF = load_configuration()
 
 
-class RequestHandler(spoon.UDPGulp):
+class RequestHandler(spoon.server.UDPGulp):
     """Handle a single request."""
     def handle(self):
         """Handle a single incoming connection."""
@@ -132,12 +127,12 @@ class RequestHandler(spoon.UDPGulp):
         logger = logging.getLogger("rabl")
         # XXX It might be better to queue these and do them in a batch.
         try:
-            db = MySQLdb.connect(host=CONF.get("mysql", "host"),
+            db = pymysql.connect(host=CONF.get("mysql", "host"),
                                  user=CONF.get("mysql", "user"),
                                  passwd=CONF.get("mysql", "password"),
                                  db=CONF.get("mysql", "db"),
                                  connect_timeout=60)
-        except MySQLdb.Error as e:
+        except pymysql.Error as e:
             logger.error("Unable to connect to database: %s", e)
             return
         c = db.cursor()
@@ -150,7 +145,7 @@ class RequestHandler(spoon.UDPGulp):
                       "(%%s, %%s, %%s) ON DUPLICATE KEY UPDATE "
                       "spam_count=spam_count+%%s" % table_name,
                       (str(address), str(reporter), diff, diff))
-        except MySQLdb.Error as e:
+        except pymysql.Error as e:
             logger.error("Unable to update RABL: %s", e)
         else:
             db.commit()
@@ -160,49 +155,20 @@ class RequestHandler(spoon.UDPGulp):
                     reporter, is_spam)
 
 
-class RABLServer(spoon.UDPSpork):
+class RABLServer(spoon.server.UDPSpork):
     """A simple server that handles RABL updates."""
     handler_klass = RequestHandler
+    server_logger = "rabl"
+    command_line_defaults = {
+      "port": 61382,
+      "interface": "",
+      "pid_file": "/var/run/rabl_server.pid",
+      "log_file": "/var/log/rabl_server.log",
+      "sentry_dsn": CONF.get("sentry", "dsn"),
+      "spork": 12,
+    }
 
-	def load_config(self):
-		"""Reload the configuration."""
-		global CONF
-		CONF = load_configuration()
-
-
-def main():
-    """Parse command-line options and execute requested actions."""
-    description = "Reactive Autonomous Black List"
-    opt = optparse.OptionParser(description=description)
-    opt.add_option("-n", "--nice", dest="nice", type="int",
-                   help="'nice' level", default=0)
-    opt.add_option("-i", "--ionice", dest="ionice", type="int",
-                   help="'ionice' level, can be one of this 0,1,2,3")
-    opt.add_option("--ionice-prio", dest="ionice_prio", type="int",
-                   help="'ionice' class priority, this goes from 0 to 7 on "
-                   "ionice class 1 and 2")
-    opt.add_option("-p", "--port", dest="port", type="int",
-                   help="port to listen on for UDP reports", default=61382)
-    opt.add_option("-d", "--debug", action="store_true", default=False,
-                   dest="debug", help="enable debugging output")
-    options = opt.parse_args()[0]
-    os.nice(options.nice)
-    if options.ionice is not None:
-        proc = psutil.Process(os.getpid())
-        proc.set_ionice(options.ionice, options.ionice_prio)
-
-    logger = logging.getLogger("rabl")
-    if options.debug:
-        stream_level = "DEBUG"
-    else:
-        stream_level = "CRITICAL"
-    common.setup_logging(logger, "/var/log/rabl_server.log",
-                         CONF.get("sentry", "dsn"),
-                         stream_level=stream_level)
-	
-    server = RABLServer(("", options.port))
-    spoon.daemon.run_daemon(server, "/var/run/rabl_server.pid")
-
-
-if __name__ == "__main__":
-    main()
+    def load_config(self):
+        """Reload the configuration."""
+        global CONF
+        CONF = load_configuration()

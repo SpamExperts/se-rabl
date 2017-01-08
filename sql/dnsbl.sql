@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `rabl-verified` (
   `last_seen` timestamp COMMENT "Last time a spam message was seen from this IP by this user",
   PRIMARY KEY  (`ip`, `reporter`),
   KEY  (`ip`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="Reactive Autonomous Blackhole List"
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="Reactive Autonomous Blackhole List";
 
 CREATE TABLE IF NOT EXISTS `rabl-reported` (
   `ip` char(43) NOT NULL COMMENT "The reported IP address or network",
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `rabl-reported` (
   `last_seen` timestamp COMMENT "Last time a spam message was seen from this IP by this user",
   PRIMARY KEY  (`ip`, `reporter`),
   KEY  (`ip`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="Reactive Autonomous Blackhole List"
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="Reactive Autonomous Blackhole List";
 
 CREATE TABLE IF NOT EXISTS `rabl-automatic` (
   `ip` char(43) NOT NULL COMMENT "The reported IP address or network",
@@ -23,4 +23,4 @@ CREATE TABLE IF NOT EXISTS `rabl-automatic` (
   `last_seen` timestamp COMMENT "Last time a spam message was seen from this IP by this user",
   PRIMARY KEY  (`ip`, `reporter`),
   KEY  (`ip`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="Reactive Autonomous Blackhole List"
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="Reactive Autonomous Blackhole List";
