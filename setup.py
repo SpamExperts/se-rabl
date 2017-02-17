@@ -12,7 +12,7 @@ requirements = [
     "idna==2.2",
     "ipaddr==2.1.11",
     "psutil==5.1.3",
-    "raven==5.32.0",
+    "raven==6.0.0",
     "spoon==1.0.5",
 ]
 
