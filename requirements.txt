@@ -1,5 +1,5 @@
 dnspython==1.15.0
-idna==2.4
+idna==2.5
 ipaddr==2.1.11
 psutil==5.2.0
 PyMySQL==0.7.10
