@@ -56,17 +56,18 @@ CONF = load_configuration()
 
 def get_temporary_location(filename):
     """Return an appropriate temporary location to store the file.
-
+    
     We use a temp folder within the final destination so that the copy
     should be atomic and so that we're using the same disk (e.g. taking
     advantage of the same speed, etc).
     """
-    fd, tempname = tempfile.mkstemp("sebl")
-    os.close(fd)
     tmp_folder = os.path.join(os.path.dirname(filename), "tmp")
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
-    return os.path.join(tmp_folder, os.path.basename(tempname))
+    fd, tempname = tempfile.mkstemp(os.path.basename(filename),
+                                    dir=tmp_folder)
+    os.close(fd)
+    return tempname
 
 
 def write_zone(filename, table_name, life, minspread):
