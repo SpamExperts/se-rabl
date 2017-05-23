@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 import os
 import shutil
+import hashlib
 import logging
 import optparse
 import datetime
@@ -122,7 +123,22 @@ def write_zone(filename, table_name, life, minspread):
     # Rename to the final location - the OS should ensure that this is
     # atomic.
     shutil.move(tempname, filename)
+    generate_checksum(filename)
     logger.info("Wrote %s blacklisted addresses to zone file.", total)
+
+
+def generate_checksum(filename):
+    """Generate a SHA256 hash checksum for the file."""
+    with open(filename + ".sha256", "wb") as sha_sig:
+        with open(filename, "rb") as file_content:
+            sha256_hash = hashlib.sha256()
+            while True:
+                chunk = file_content.read(1024 * 1024)
+                if not chunk:
+                    break
+                sha256_hash.update(chunk)
+            sha256_hash = sha256_hash.hexdigest()
+        sha_sig.write("%s %s\n" % (os.path.basename(filename), sha256_hash))
 
 
 def main():
