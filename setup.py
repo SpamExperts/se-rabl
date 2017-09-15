@@ -10,7 +10,7 @@ requirements = [
     "MySQL-python==1.2.5",
     "dnspython==1.15.0",
     "idna==2.6",
-    "ipaddr==2.1.11",
+    "ipaddr==2.2.0",
     "psutil==5.3.1",
     "raven==6.1.0",
     "spoon==1.0.6",
