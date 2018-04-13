@@ -11,7 +11,7 @@ requirements = [
     "dnspython==1.15.0",
     "idna==2.6",
     "ipaddr==2.2.0",
-    "psutil==5.4.3",
+    "psutil==5.4.4",
     "raven==6.6.0",
     "spoon==1.0.6",
 ]
