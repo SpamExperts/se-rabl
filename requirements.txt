@@ -2,6 +2,6 @@ dnspython==1.15.0
 idna==2.7
 ipaddr==2.2.0
 psutil==5.4.6
-mysqlclient==1.3.12
+mysqlclient==1.3.13
 raven==6.9.0
 spoon==1.0.6
