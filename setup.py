@@ -12,7 +12,7 @@ requirements = [
     "idna==2.7",
     "ipaddr==2.2.0",
     "psutil==5.4.7",
-    "raven==6.9.0",
+    "sentry-sdk==0.3.9",
     "spoon==1.0.6",
 ]
 
@@ -22,7 +22,7 @@ test_requirements = [
 
 setup(
     name='se-rabl',
-    version='0.2.0',
+    version='0.2.1',
     description="SpamExperts RABL",
     long_description=readme,
     author="SpamExperts B.V.",
