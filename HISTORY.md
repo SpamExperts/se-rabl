@@ -1,5 +1,9 @@
 # History
 
+## 0.3.1 (2018-10-08)
+
+* Upgrade from Raven to Sentry SDK.
+
 ## 0.2.0 (2017-04-04)
 
 * Improvements to the temporary filename generation.
