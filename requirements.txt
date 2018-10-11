@@ -3,5 +3,5 @@ idna==2.7
 ipaddr==2.2.0
 psutil==5.4.7
 mysqlclient==1.3.13
-sentry-sdk==0.4.0
+sentry-sdk==0.4.1
 spoon==1.0.6
