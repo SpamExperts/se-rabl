@@ -12,7 +12,7 @@ requirements = [
     "idna==2.7",
     "ipaddr==2.2.0",
     "psutil==5.4.8",
-    "sentry-sdk==0.5.3",
+    "sentry-sdk==0.5.4",
     "spoon==1.0.6",
 ]
 
