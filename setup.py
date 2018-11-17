@@ -22,7 +22,7 @@ test_requirements = [
 
 setup(
     name='se-rabl',
-    version='0.2.1',
+    version='0.3.2',
     description="SpamExperts RABL",
     long_description=readme,
     author="SpamExperts B.V.",
