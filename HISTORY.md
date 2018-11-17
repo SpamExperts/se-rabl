@@ -1,5 +1,9 @@
 # History
 
+## 0.3.2 (2018-11-17)
+
+* Bump spoon dependency version.
+
 ## 0.3.1 (2018-10-08)
 
 * Upgrade from Raven to Sentry SDK.
