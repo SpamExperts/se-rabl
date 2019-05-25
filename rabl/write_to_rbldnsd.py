@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 import os
 import shutil
+import hashlib
 import logging
 import optparse
 import datetime
@@ -56,17 +57,18 @@ CONF = load_configuration()
 
 def get_temporary_location(filename):
     """Return an appropriate temporary location to store the file.
-
+    
     We use a temp folder within the final destination so that the copy
     should be atomic and so that we're using the same disk (e.g. taking
     advantage of the same speed, etc).
     """
-    fd, tempname = tempfile.mkstemp("sebl")
-    os.close(fd)
     tmp_folder = os.path.join(os.path.dirname(filename), "tmp")
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
-    return os.path.join(tmp_folder, os.path.basename(tempname))
+    fd, tempname = tempfile.mkstemp(os.path.basename(filename),
+                                    dir=tmp_folder)
+    os.close(fd)
+    return tempname
 
 
 def write_zone(filename, table_name, life, minspread):
@@ -121,7 +123,22 @@ def write_zone(filename, table_name, life, minspread):
     # Rename to the final location - the OS should ensure that this is
     # atomic.
     shutil.move(tempname, filename)
+    generate_checksum(filename)
     logger.info("Wrote %s blacklisted addresses to zone file.", total)
+
+
+def generate_checksum(filename):
+    """Generate a SHA256 hash checksum for the file."""
+    with open(filename + ".sha256", "wb") as sha_sig:
+        with open(filename, "rb") as file_content:
+            sha256_hash = hashlib.sha256()
+            while True:
+                chunk = file_content.read(1024 * 1024)
+                if not chunk:
+                    break
+                sha256_hash.update(chunk)
+            sha256_hash = sha256_hash.hexdigest()
+        sha_sig.write("%s %s\n" % (os.path.basename(filename), sha256_hash))
 
 
 def main():

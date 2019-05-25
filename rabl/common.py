@@ -2,15 +2,8 @@
 
 import logging
 
-import raven
-import raven.transport
-from raven.handlers.logging import SentryHandler
-
-
-SENTRY_IGNORES = [
-    "KeyboardInterrupt",
-    "MemoryError",
-]
+import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 
 def setup_logging(logger, filename=None, sentry=None, application=None,
@@ -39,16 +32,12 @@ def setup_logging(logger, filename=None, sentry=None, application=None,
         logger.addHandler(stream_handler)
 
     if sentry:
-        client = raven.Client(sentry,
-                              enable_breadcrumbs=False,
-                              ignore_exceptions=SENTRY_IGNORES,
-                              transport=raven.transport.HTTPTransport)
-        sentry_handler = SentryHandler(client)
-        sentry_handler.setLevel(logging.WARNING)
-        logger.addHandler(sentry_handler)
-        null_loggers = [
-            logging.getLogger("sentry.errors"),
-            logging.getLogger("sentry.errors.uncaught")
-        ]
-        for null_logger in null_loggers:
-            null_logger.handlers = [logging.NullHandler()]
+        sentry_logging = LoggingIntegration(
+            level=logging.INFO
+            event_level=logging.WARNING
+        )
+        integrations = [sentry_logging]
+        sentry_sdk.init(
+            dsn=sentry,
+            integrations=integrations
+        )
