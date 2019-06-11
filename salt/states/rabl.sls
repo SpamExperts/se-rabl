@@ -30,15 +30,15 @@ download get-pip:
     - cwd: /var/cache/
     - creates: /var/cache/get-pip.py
 
-install pip:
-  cmd.run:
-    - name: /usr/bin/python /var/cache/get-pip.py
-    - unless: 'test -f /usr/bin/pip && fgrep -q /usr/bin/python /usr/bin/pip && /usr/bin/python -m pip'
-    - require:
-      - cmd: download get-pip
-  pip.installed:
-    - name: setuptools
-    - upgrade: True
+#install pip:
+#  cmd.run:
+#    - name: /usr/bin/python /var/cache/get-pip.py
+#    - unless: 'test -f /usr/bin/pip && fgrep -q /usr/bin/python /usr/bin/pip && /usr/bin/python -m pip'
+#    - require:
+#      - cmd: download get-pip
+#  pip.installed:
+#    - name: setuptools
+#    - upgrade: True
 
 mariadb-server:
   pkg:
