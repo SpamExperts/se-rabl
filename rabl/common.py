@@ -33,7 +33,7 @@ def setup_logging(logger, filename=None, sentry=None, application=None,
 
     if sentry:
         sentry_logging = LoggingIntegration(
-            level=logging.INFO
+            level=logging.INFO,
             event_level=logging.WARNING
         )
         integrations = [sentry_logging]

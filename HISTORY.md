@@ -1,5 +1,9 @@
 # History
 
+## 1.0.0 (2019-06-11)
+
+* Fix typo.
+
 ## 0.3.2 (2018-11-17)
 
 * Bump spoon dependency version.
