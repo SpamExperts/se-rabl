@@ -1,5 +1,9 @@
 # History
 
+## 1.0.1 (2019-xx-xx)
+
+* Add manifest file.
+
 ## 1.0.0 (2019-06-11)
 
 * Fix typo.
