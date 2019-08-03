@@ -132,10 +132,17 @@ def generate_checksum(filename):
         sha_sig.write("%s %s\n" % (os.path.basename(filename), sha256_hash))
 
 
-@click.option("--list", "table_name", default="rabl-verified", help="name of list to output (rabl-automatic, rabl-reported, rabl-verified)")
+@click.option(
+    "--list",
+    "table_name",
+    default="rabl-verified",
+    help="name of list to output (rabl-automatic, rabl-reported, rabl-verified)",
+)
 @click.option("--zone-file", default="/tmp/rabl.zone", help="filename for zone file")
 @click.option("--life", default=60, help="number of seconds entries live for")
-@click.option("--minspread", default=10000, help="minimum number of reporters to be listed")
+@click.option(
+    "--minspread", default=10000, help="minimum number of reporters to be listed"
+)
 @click.option("--debug/--no-debug", help="enable debugging output")
 def main(table_name, zone_file, life, minspread, debug):
     """Write a rbldnsd format zone file for RABL."""
