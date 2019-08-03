@@ -2,6 +2,8 @@
 
 ## 1.0.1 (2019-xx-xx)
 
+* Use click rather than optparse.
+* Remove nice/ionice options.
 * Add manifest file.
 
 ## 1.0.0 (2019-06-11)
