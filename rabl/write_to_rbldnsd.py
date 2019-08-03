@@ -15,10 +15,7 @@ import logging
 import optparse
 import datetime
 import tempfile
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+import configparser
 
 import psutil
 

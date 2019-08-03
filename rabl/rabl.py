@@ -25,10 +25,7 @@ from __future__ import absolute_import
 import os
 import logging
 import ipaddress
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+import configparser
 
 try:
     import MySQLdb
