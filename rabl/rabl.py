@@ -38,12 +38,7 @@ def load_configuration():
     """Load server-specific configuration settings."""
     conf = configparser.ConfigParser()
     defaults = {
-        "mysql": {
-            "host": "localhost",
-            "db": "dnsbl",
-            "user": "rabl",
-            "password": "",
-        },
+        "mysql": {"host": "localhost", "db": "dnsbl", "user": "rabl", "password": ""},
         "rabl": {
             # Reports from this IP may specify the original source of the
             # report.
@@ -55,9 +50,7 @@ def load_configuration():
             # Other reports go to this table.
             "standard_table": "rabl-automatic",
         },
-        "sentry": {
-            "dsn": "",
-        },
+        "sentry": {"dsn": ""},
     }
     # Load in default values.
     for section, values in defaults.items():
@@ -75,6 +68,7 @@ CONF = load_configuration()
 
 class RequestHandler(spoon.server.UDPGulp):
     """Handle a single request."""
+
     def handle(self):
         """Handle a single incoming connection."""
         logger = logging.getLogger("rabl")
@@ -124,11 +118,13 @@ class RequestHandler(spoon.server.UDPGulp):
         logger = logging.getLogger("rabl")
         # XXX It might be better to queue these and do them in a batch.
         try:
-            db = MySQLdb.connect(host=CONF.get("mysql", "host"),
-                                 user=CONF.get("mysql", "user"),
-                                 passwd=CONF.get("mysql", "password"),
-                                 db=CONF.get("mysql", "db"),
-                                 connect_timeout=60)
+            db = MySQLdb.connect(
+                host=CONF.get("mysql", "host"),
+                user=CONF.get("mysql", "user"),
+                passwd=CONF.get("mysql", "password"),
+                db=CONF.get("mysql", "db"),
+                connect_timeout=60,
+            )
         except MySQLdb.Error as e:
             logger.error("Unable to connect to database: %s", e)
             return
@@ -138,31 +134,33 @@ class RequestHandler(spoon.server.UDPGulp):
         # The str(address) is necessary, because sqlite3 doesn't do an
         # automatic conversion to string.
         try:
-            c.execute("INSERT INTO `%s` (ip, reporter, spam_count) VALUES "
-                      "(%%s, %%s, %%s) ON DUPLICATE KEY UPDATE "
-                      "spam_count=spam_count+%%s" % table_name,
-                      (str(address), str(reporter), diff, diff))
+            c.execute(
+                "INSERT INTO `%s` (ip, reporter, spam_count) VALUES "
+                "(%%s, %%s, %%s) ON DUPLICATE KEY UPDATE "
+                "spam_count=spam_count+%%s" % table_name,
+                (str(address), str(reporter), diff, diff),
+            )
         except MySQLdb.Error as e:
             logger.error("Unable to update RABL: %s", e)
         else:
             db.commit()
         c.close()
         db.close()
-        logger.info("Address %s reported by %s (spam: %s)", address,
-                    reporter, is_spam)
+        logger.info("Address %s reported by %s (spam: %s)", address, reporter, is_spam)
 
 
 class RABLServer(spoon.server.UDPSpork):
     """A simple server that handles RABL updates."""
+
     handler_klass = RequestHandler
     server_logger = "rabl"
     command_line_defaults = {
-      "port": 61382,
-      "interface": "",
-      "pid_file": "/var/run/rabl_server.pid",
-      "log_file": "/var/log/rabl_server.log",
-      "sentry_dsn": CONF.get("sentry", "dsn"),
-      "spork": 12,
+        "port": 61382,
+        "interface": "",
+        "pid_file": "/var/run/rabl_server.pid",
+        "log_file": "/var/log/rabl_server.log",
+        "sentry_dsn": CONF.get("sentry", "dsn"),
+        "spork": 12,
     }
 
     def load_config(self):

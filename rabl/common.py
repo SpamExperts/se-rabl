@@ -6,8 +6,9 @@ import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 
-def setup_logging(logger, filename=None, sentry=None, application=None,
-                  stream_level=None):
+def setup_logging(
+    logger, filename=None, sentry=None, application=None, stream_level=None
+):
     """Initialize logging for this logger.
 
     :param logger: The logger that should be initialized.
@@ -16,7 +17,7 @@ def setup_logging(logger, filename=None, sentry=None, application=None,
     :param stream_level: If specified add a stream handler
       and set it to that level
     """
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
     logger.setLevel(logging.DEBUG)
 
     if filename:
@@ -33,11 +34,7 @@ def setup_logging(logger, filename=None, sentry=None, application=None,
 
     if sentry:
         sentry_logging = LoggingIntegration(
-            level=logging.INFO,
-            event_level=logging.WARNING
+            level=logging.INFO, event_level=logging.WARNING
         )
         integrations = [sentry_logging]
-        sentry_sdk.init(
-            dsn=sentry,
-            integrations=integrations
-        )
+        sentry_sdk.init(dsn=sentry, integrations=integrations)
