@@ -120,7 +120,7 @@ def write_zone(filename, table_name, life, minspread):
 
 def generate_checksum(filename):
     """Generate a SHA256 hash checksum for the file."""
-    with open(filename + ".sha256", "wb") as sha_sig:
+    with open(filename + ".sha256", "w") as sha_sig:
         with open(filename, "rb") as file_content:
             sha256_hash = hashlib.sha256()
             while True:
