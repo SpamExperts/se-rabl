@@ -20,8 +20,6 @@ a large number of reports from a single source is not as important as
 a small number of reports from many different sources.
 """
 
-from __future__ import absolute_import
-
 import os
 import logging
 import ipaddress

@@ -6,8 +6,6 @@ General a zone file suitable for use with rbldnsd from the
 data collected by the RABL server.
 """
 
-from __future__ import absolute_import
-
 import os
 import shutil
 import hashlib
