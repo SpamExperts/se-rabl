@@ -15,6 +15,7 @@ import logging
 import optparse
 import datetime
 import tempfile
+
 try:
     import configparser
 except ImportError:
@@ -31,15 +32,8 @@ def load_configuration():
     """Load server-specific configuration settings."""
     conf = configparser.ConfigParser()
     defaults = {
-        "mysql": {
-            "host": "localhost",
-            "db": "",
-            "user": "rabl",
-            "password": "",
-        },
-        "sentry": {
-            "dsn": "",
-        },
+        "mysql": {"host": "localhost", "db": "", "user": "rabl", "password": ""},
+        "sentry": {"dsn": ""},
     }
     # Load in default values.
     for section, values in defaults.items():
@@ -65,8 +59,7 @@ def get_temporary_location(filename):
     tmp_folder = os.path.join(os.path.dirname(filename), "tmp")
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
-    fd, tempname = tempfile.mkstemp(os.path.basename(filename),
-                                    dir=tmp_folder)
+    fd, tempname = tempfile.mkstemp(os.path.basename(filename), dir=tmp_folder)
     os.close(fd)
     return tempname
 
@@ -91,22 +84,27 @@ def write_zone(filename, table_name, life, minspread):
         # XXX is hostnames (for the IPv6) addresses.  We need to make them
         # XXX all "generic", which means reversing the IPv4 addresses, or
         # XXX split the IPv4 and IPv6 into two separate lists.
-#        fout.write("2.0.0.0.0.0.f.7.f.f.f.f."
-#                   "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0\n")
-#        total += 1
-        db = MySQLdb.connect(host=CONF.get("mysql", "host"),
-                             user=CONF.get("mysql", "user"),
-                             passwd=CONF.get("mysql", "password"),
-                             db=CONF.get("mysql", "db"),
-                             connect_timeout=60)
+        #        fout.write("2.0.0.0.0.0.f.7.f.f.f.f."
+        #                   "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0\n")
+        #        total += 1
+        db = MySQLdb.connect(
+            host=CONF.get("mysql", "host"),
+            user=CONF.get("mysql", "user"),
+            passwd=CONF.get("mysql", "password"),
+            db=CONF.get("mysql", "db"),
+            connect_timeout=60,
+        )
         c = db.cursor()
         # Expire the old data.
-        c.execute("DELETE FROM `%s` WHERE spam_count < 1 OR last_seen < %%s" %
-                  table_name, (datetime.datetime.now() -
-                               datetime.timedelta(seconds=life),))
+        c.execute(
+            "DELETE FROM `%s` WHERE spam_count < 1 OR last_seen < %%s" % table_name,
+            (datetime.datetime.now() - datetime.timedelta(seconds=life),),
+        )
         db.commit()
-        c.execute("SELECT ip FROM `%s` GROUP BY ip HAVING COUNT(*) > %%s" %
-                  table_name, (minspread,))
+        c.execute(
+            "SELECT ip FROM `%s` GROUP BY ip HAVING COUNT(*) > %%s" % table_name,
+            (minspread,),
+        )
         for row in c.fetchall():
             ip = row[0]
             if ip in ("127.0.0.1", "0.0.0.0", "::1"):
@@ -145,26 +143,57 @@ def main():
     """Parse command-line options and execute requested actions."""
     description = "Reactive Autonomous Black List"
     opt = optparse.OptionParser(description=description)
-    opt.add_option("-n", "--nice", dest="nice", type="int",
-                   help="'nice' level", default=0)
-    opt.add_option("-i", "--ionice", dest="ionice", type="int",
-                   help="'ionice' level, can be one of this 0,1,2,3")
-    opt.add_option("--ionice-prio", dest="ionice_prio", type="int",
-                   help="'ionice' class priority, this goes from 0 to 7 on "
-                   "ionice class 1 and 2")
-    opt.add_option("--list", dest="table_name",
-                   help="name of list to output (rabl-automatic, "
-                   "rabl-reported, rabl-verified)",
-                   default="rabl-verified")
-    opt.add_option("--zone-file", dest="zone_file",
-                   help="filename for zone file", default="/tmp/rabl.zone")
-    opt.add_option("--life", dest="life", type="int",
-                   help="number of seconds entries live for", default=60)
-    opt.add_option("--minspread", dest="minspread", type="int",
-                   help="minimum number of reporters to be listed",
-                   default=10000)
-    opt.add_option("-d", "--debug", action="store_true", default=False,
-                   dest="debug", help="enable debugging output")
+    opt.add_option(
+        "-n", "--nice", dest="nice", type="int", help="'nice' level", default=0
+    )
+    opt.add_option(
+        "-i",
+        "--ionice",
+        dest="ionice",
+        type="int",
+        help="'ionice' level, can be one of this 0,1,2,3",
+    )
+    opt.add_option(
+        "--ionice-prio",
+        dest="ionice_prio",
+        type="int",
+        help="'ionice' class priority, this goes from 0 to 7 on "
+        "ionice class 1 and 2",
+    )
+    opt.add_option(
+        "--list",
+        dest="table_name",
+        help="name of list to output (rabl-automatic, " "rabl-reported, rabl-verified)",
+        default="rabl-verified",
+    )
+    opt.add_option(
+        "--zone-file",
+        dest="zone_file",
+        help="filename for zone file",
+        default="/tmp/rabl.zone",
+    )
+    opt.add_option(
+        "--life",
+        dest="life",
+        type="int",
+        help="number of seconds entries live for",
+        default=60,
+    )
+    opt.add_option(
+        "--minspread",
+        dest="minspread",
+        type="int",
+        help="minimum number of reporters to be listed",
+        default=10000,
+    )
+    opt.add_option(
+        "-d",
+        "--debug",
+        action="store_true",
+        default=False,
+        dest="debug",
+        help="enable debugging output",
+    )
     options = opt.parse_args()[0]
     os.nice(options.nice)
     if options.ionice is not None:
@@ -176,12 +205,14 @@ def main():
         stream_level = "DEBUG"
     else:
         stream_level = "CRITICAL"
-    rabl.common.setup_logging(logger, "/var/log/rabl.log",
-                              CONF.get("sentry", "dsn"),
-                              stream_level=stream_level)
+    rabl.common.setup_logging(
+        logger,
+        "/var/log/rabl.log",
+        CONF.get("sentry", "dsn"),
+        stream_level=stream_level,
+    )
 
-    write_zone(options.zone_file, options.table_name, options.life,
-               options.minspread)
+    write_zone(options.zone_file, options.table_name, options.life, options.minspread)
 
 
 if __name__ == "__main__":
