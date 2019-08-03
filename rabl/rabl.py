@@ -24,12 +24,11 @@ from __future__ import absolute_import
 
 import os
 import logging
+import ipaddress
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
-
-import ipaddr
 
 try:
     import MySQLdb
@@ -101,15 +100,15 @@ class RequestHandler(spoon.server.UDPGulp):
         is_spam = is_spam.lower() == "true"
 
         # We change reported IPv6 addresses to the /64 network.
-        address = ipaddr.IPAddress(address)
-        if isinstance(address, ipaddr.IPv6Address):
-            address = ipaddr.IPNetwork(str(address) + "/64").network
-        reporter = ipaddr.IPAddress(self.client_address[0])
+        address = ipaddress.ip_address(address)
+        if isinstance(address, ipaddress.IPv6Address):
+            address = ipaddress.ip_network(str(address) + "/64").network
+        reporter = ipaddress.ip_address(self.client_address[0])
 
         if reporter == CONF.get("rabl", "trusted_ip"):
             table_name = CONF.get("rabl", "trusted_table")
             # This IP is permitted to claim the report is from other IPs.
-            reporter = ipaddr.IPAddress(claimed_reporter)
+            reporter = ipaddress.ip_address(claimed_reporter)
         # If the report has a claimed reporter, then this has been
         # reported by a human, so may be able to be trusted more.
         elif claimed_reporter:
