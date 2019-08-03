@@ -15,30 +15,10 @@ basic-install:
       - binutils
       - libc6
       - gcc
-      - python-dev
+      - python3-dev
+      - python3-pip
+      - python3-whl
       - wget
-
-broken_python_modules:
-  pkg.purged:
-    - pkgs:
-      - python-pip
-      - python-pip-whl
-
-download get-pip:
-  cmd.run:
-    - name: wget -nv -N https://bootstrap.pypa.io/get-pip.py
-    - cwd: /var/cache/
-    - creates: /var/cache/get-pip.py
-
-#install pip:
-#  cmd.run:
-#    - name: /usr/bin/python /var/cache/get-pip.py
-#    - unless: 'test -f /usr/bin/pip && fgrep -q /usr/bin/python /usr/bin/pip && /usr/bin/python -m pip'
-#    - require:
-#      - cmd: download get-pip
-#  pip.installed:
-#    - name: setuptools
-#    - upgrade: True
 
 mariadb-server:
   pkg:

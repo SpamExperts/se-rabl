@@ -1,5 +1,10 @@
 # History
 
+## 1.1.0 (2019-xx-xx)
+
+* Drop support for Python 2.
+* Add support for Python 3.7.
+
 ## 1.0.1 (2019-xx-xx)
 
 * Use click rather than optparse.

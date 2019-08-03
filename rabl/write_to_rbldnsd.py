@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 """Reactive Autonomous Blackhole List Server
 
@@ -6,19 +6,13 @@ General a zone file suitable for use with rbldnsd from the
 data collected by the RABL server.
 """
 
-from __future__ import absolute_import
-
 import os
 import shutil
 import hashlib
 import logging
 import datetime
 import tempfile
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+import configparser
 
 import MySQLdb
 
@@ -50,7 +44,7 @@ CONF = load_configuration()
 
 def get_temporary_location(filename):
     """Return an appropriate temporary location to store the file.
-    
+
     We use a temp folder within the final destination so that the copy
     should be atomic and so that we're using the same disk (e.g. taking
     advantage of the same speed, etc).
@@ -126,7 +120,7 @@ def write_zone(filename, table_name, life, minspread):
 
 def generate_checksum(filename):
     """Generate a SHA256 hash checksum for the file."""
-    with open(filename + ".sha256", "wb") as sha_sig:
+    with open(filename + ".sha256", "w") as sha_sig:
         with open(filename, "rb") as file_content:
             sha256_hash = hashlib.sha256()
             while True:
