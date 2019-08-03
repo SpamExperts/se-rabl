@@ -12,7 +12,6 @@ import os
 import shutil
 import hashlib
 import logging
-import optparse
 import datetime
 import tempfile
 
@@ -21,9 +20,9 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-import psutil
-
 import MySQLdb
+
+import click
 
 import rabl.common
 
@@ -139,69 +138,15 @@ def generate_checksum(filename):
         sha_sig.write("%s %s\n" % (os.path.basename(filename), sha256_hash))
 
 
-def main():
-    """Parse command-line options and execute requested actions."""
-    description = "Reactive Autonomous Black List"
-    opt = optparse.OptionParser(description=description)
-    opt.add_option(
-        "-n", "--nice", dest="nice", type="int", help="'nice' level", default=0
-    )
-    opt.add_option(
-        "-i",
-        "--ionice",
-        dest="ionice",
-        type="int",
-        help="'ionice' level, can be one of this 0,1,2,3",
-    )
-    opt.add_option(
-        "--ionice-prio",
-        dest="ionice_prio",
-        type="int",
-        help="'ionice' class priority, this goes from 0 to 7 on "
-        "ionice class 1 and 2",
-    )
-    opt.add_option(
-        "--list",
-        dest="table_name",
-        help="name of list to output (rabl-automatic, " "rabl-reported, rabl-verified)",
-        default="rabl-verified",
-    )
-    opt.add_option(
-        "--zone-file",
-        dest="zone_file",
-        help="filename for zone file",
-        default="/tmp/rabl.zone",
-    )
-    opt.add_option(
-        "--life",
-        dest="life",
-        type="int",
-        help="number of seconds entries live for",
-        default=60,
-    )
-    opt.add_option(
-        "--minspread",
-        dest="minspread",
-        type="int",
-        help="minimum number of reporters to be listed",
-        default=10000,
-    )
-    opt.add_option(
-        "-d",
-        "--debug",
-        action="store_true",
-        default=False,
-        dest="debug",
-        help="enable debugging output",
-    )
-    options = opt.parse_args()[0]
-    os.nice(options.nice)
-    if options.ionice is not None:
-        proc = psutil.Process(os.getpid())
-        proc.set_ionice(options.ionice, options.ionice_prio)
-
+@click.option("--list", "table_name", default="rabl-verified", help="name of list to output (rabl-automatic, rabl-reported, rabl-verified)")
+@click.option("--zone-file", default="/tmp/rabl.zone", help="filename for zone file")
+@click.option("--life", default=60, help="number of seconds entries live for")
+@click.option("--minspread", default=10000, help="minimum number of reporters to be listed")
+@click.option("--debug/--no-debug", help="enable debugging output")
+def main(table_name, zone_file, life, minspread, debug):
+    """Write a rbldnsd format zone file for RABL."""
     logger = logging.getLogger("rabl")
-    if options.debug:
+    if debug:
         stream_level = "DEBUG"
     else:
         stream_level = "CRITICAL"
@@ -211,8 +156,7 @@ def main():
         CONF.get("sentry", "dsn"),
         stream_level=stream_level,
     )
-
-    write_zone(options.zone_file, options.table_name, options.life, options.minspread)
+    write_zone(zone_file, table_name, life, minspread)
 
 
 if __name__ == "__main__":
