@@ -81,7 +81,7 @@ class RequestHandler(spoon.server.UDPGulp):
         """Handle a single incoming connection."""
         logger = logging.getLogger("rabl")
         logger.debug("Handling report from %s", self.client_address[0])
-        packet = self.rfile.read(320000).strip()
+        packet = self.rfile.read(320000).decode("utf8").strip()
 
         # claimed_reporter is an IP address when from the trusted IP, or ""
         # otherwise.
