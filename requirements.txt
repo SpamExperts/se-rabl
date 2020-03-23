@@ -4,4 +4,4 @@ ipaddr==2.2.0
 mysqlclient==1.4.6
 sentry-sdk==0.14.3
 spoon==1.0.6
-Click==7.0
+Click==7.1.1
