@@ -11,7 +11,7 @@ requirements = [
     "dnspython==1.16.0",
     "idna==2.9",
     "ipaddr==2.2.0",
-    "sentry-sdk==0.16.4",
+    "sentry-sdk==0.16.5",
     "spoon==1.0.6",
 ]
 
