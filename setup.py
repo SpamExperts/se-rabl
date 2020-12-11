@@ -8,7 +8,7 @@ with open("README.md") as readme_file:
 
 requirements = [
     "MySQL-python==1.2.5",
-    "dnspython==1.16.0",
+    "dnspython==2.0.0",
     "idna==2.9",
     "ipaddr==2.2.0",
     "sentry-sdk==0.19.5",
