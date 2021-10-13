@@ -1,5 +1,5 @@
 dnspython==1.16.0
-idna==2.9
+idna==3.3
 ipaddr==2.2.0
 mysqlclient==1.4.6
 sentry-sdk==0.20.3
