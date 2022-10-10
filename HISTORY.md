@@ -5,6 +5,7 @@
 * Use click rather than optparse.
 * Remove nice/ionice options.
 * Add manifest file.
+* Bump sentry-sdk
 
 ## 1.0.0 (2019-06-11)
 
