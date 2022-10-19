@@ -39,7 +39,7 @@ salt-call --local state.highstate pillar='{"mysql":{"password":"rootpassword", "
 flag:
 
 ```
-    git -C /var/cache/se-rabl pull && salt-call --local state.highstate pillar='{"just_update":true}'
+git -C /var/cache/se-rabl pull && salt-call --local state.highstate pillar='{"just_update":true}'
 ```
 
 Features
