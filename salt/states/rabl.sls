@@ -17,15 +17,15 @@ basic-install:
       - libc6
       - gcc
       - wget
-      - python-dev
-      - python-pip
+      - python3-dev
+      - python3-pip
       - default-libmysqlclient-dev
       - libmariadb-dev-compat
 
 # Salt 2018.3.4 (Oxygen) doesn't support a newer version
 install_required_salt_packages:
   cmd.run:
-    - name: pip install mysqlclient virtualenv==16.1.0
+    - name: pip3 install mysqlclient virtualenv==16.1.0
 
 mariadb-server:
   pkg:
@@ -80,8 +80,6 @@ add-tables:
     - name: mysql dnsbl < /var/cache/se-rabl/sql/dnsbl.sql
 
 # Configure pip and virtualenv
-
-
 rabl-pre-install:
   git.latest:
     - name: git@github.com:SpamExperts/se-rabl.git
@@ -91,6 +89,7 @@ rabl-pre-install:
     - name: /var/cache/se-rabl-env
     - system_site_packages: False
     - pip_upgrade: True
+    - python: python2
   pip.installed:
     - name: setuptools
     - upgrade: True
