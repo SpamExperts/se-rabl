@@ -81,10 +81,6 @@ add-tables:
 
 # Configure pip and virtualenv
 rabl-pre-install:
-  git.latest:
-    - name: git@github.com:SpamExperts/se-rabl.git
-    - target: /var/cache/se-rabl/
-    - force_reset: True
   virtualenv.managed:
     - name: /var/cache/se-rabl-env
     - system_site_packages: False
