@@ -22,15 +22,10 @@ basic-install:
       - default-libmysqlclient-dev
       - libmariadb-dev-compat
 
-install_mysqlclient:
-  pip.installed:
-    - name: mysqlclient
-
 # Salt 2018.3.4 (Oxygen) doesn't support a newer version
-install_virtualenv:
-  pip.installed:
-    - name: virtualenv==16.1.0
-
+install_required_salt_packages:
+  cmd.run:
+    - name: pip install mysqlclient virtualenv==16.1.0
 
 mariadb-server:
   pkg:
