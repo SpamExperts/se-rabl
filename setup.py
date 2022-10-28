@@ -6,14 +6,8 @@ from setuptools import setup
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
-requirements = [
-    "MySQL-python==1.2.5",
-    "dnspython==1.16.0",
-    "idna==3.3",
-    "ipaddr==2.2.0",
-    "sentry-sdk==1.5.12",
-    "spoon==1.0.6",
-]
+with open("requirements.txt") as requirements_file:
+    requirements = requirements_file.read().splitlines()
 
 test_requirements = [
     # TODO: put package test requirements here

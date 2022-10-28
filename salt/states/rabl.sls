@@ -3,6 +3,7 @@ basic-install:
   pkg:
     - latest
     - pkgs:
+      - nano
       - git
       - bsdmainutils
       - libssl-dev
@@ -15,30 +16,17 @@ basic-install:
       - binutils
       - libc6
       - gcc
-      - python-dev
       - wget
+      - python-dev
+      - python3-dev
+      - python3-pip
+      - default-libmysqlclient-dev
+      - libmariadb-dev-compat
 
-broken_python_modules:
-  pkg.purged:
-    - pkgs:
-      - python-pip
-      - python-pip-whl
-
-download get-pip:
+# Salt 2018.3.4 (Oxygen) doesn't support a newer version
+install_required_salt_packages:
   cmd.run:
-    - name: wget -nv -N https://bootstrap.pypa.io/get-pip.py
-    - cwd: /var/cache/
-    - creates: /var/cache/get-pip.py
-
-#install pip:
-#  cmd.run:
-#    - name: /usr/bin/python /var/cache/get-pip.py
-#    - unless: 'test -f /usr/bin/pip && fgrep -q /usr/bin/python /usr/bin/pip && /usr/bin/python -m pip'
-#    - require:
-#      - cmd: download get-pip
-#  pip.installed:
-#    - name: setuptools
-#    - upgrade: True
+    - name: pip3 install mysqlclient virtualenv==16.1.0
 
 mariadb-server:
   pkg:
@@ -93,20 +81,12 @@ add-tables:
     - name: mysql dnsbl < /var/cache/se-rabl/sql/dnsbl.sql
 
 # Configure pip and virtualenv
-pip-conf:
-  pip.installed:
-    - name: virtualenv
-
 rabl-pre-install:
-  git.latest:
-    - name: git@github.com:SpamExperts/se-rabl.git
-    - target: /var/cache/se-rabl/
-    - force_reset: True
-    - identity: /root/.ssh/id_rsa
   virtualenv.managed:
     - name: /var/cache/se-rabl-env
     - system_site_packages: False
     - pip_upgrade: True
+    - python: python2
   pip.installed:
     - name: setuptools
     - upgrade: True
