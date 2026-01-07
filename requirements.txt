@@ -6,4 +6,4 @@ ipaddr==2.2.0
 mysqlclient==2.2.7
 sentry-sdk==2.48.0
 spoon==1.0.7
-urllib3==2.6.2
+urllib3==2.6.3
