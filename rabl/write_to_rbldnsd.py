@@ -137,7 +137,7 @@ def generate_checksum(filename):
             sha256_hash = sha256_hash.hexdigest()
         sha_sig.write("%s %s\n" % (os.path.basename(filename), sha256_hash))
 
-
+@click.command()
 @click.option(
     "--list",
     "table_name",
