@@ -4,6 +4,6 @@ dnspython==2.8.0
 idna==3.11
 ipaddr==2.2.0
 mysqlclient==2.2.7
-sentry-sdk==2.48.0
+sentry-sdk==2.54.0
 spoon==1.0.7
 urllib3==2.6.2
