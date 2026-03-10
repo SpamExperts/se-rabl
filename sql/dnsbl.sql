@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `rabl-verified` (
   `ip` char(43) NOT NULL COMMENT "The reported IP address or network",
   `reporter` char(43) NOT NULL COMMENT "The IP of the reporting user",
-  `spam_count` int(11) NOT NULL DEFAULT 0, COMMENT "The number of spam messages seen from this IP",
+  `spam_count` int(11) NOT NULL DEFAULT 0 COMMENT "The number of spam messages seen from this IP",
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Last time a spam message was seen from this IP by this user'
   PRIMARY KEY  (`ip`, `reporter`),
   KEY  (`ip`)
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `rabl-verified` (
 CREATE TABLE IF NOT EXISTS `rabl-reported` (
   `ip` char(43) NOT NULL COMMENT "The reported IP address or network",
   `reporter` char(43) NOT NULL COMMENT "The IP of the reporting user",
-  `spam_count` int(11) NOT NULL DEFAULT 0, COMMENT "The number of spam messages seen from this IP",
+  `spam_count` int(11) NOT NULL DEFAULT 0 COMMENT "The number of spam messages seen from this IP",
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Last time a spam message was seen from this IP by this user',
   PRIMARY KEY  (`ip`, `reporter`),
   KEY  (`ip`)
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `rabl-reported` (
 CREATE TABLE IF NOT EXISTS `rabl-automatic` (
   `ip` char(43) NOT NULL COMMENT "The reported IP address or network",
   `reporter` char(43) NOT NULL COMMENT "The IP of the reporting user",
-  `spam_count` int(11) NOT NULL DEFAULT 0, COMMENT "The number of spam messages seen from this IP",
+  `spam_count` int(11) NOT NULL DEFAULT 0 COMMENT "The number of spam messages seen from this IP",
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Last time a spam message was seen from this IP by this user',
   PRIMARY KEY  (`ip`, `reporter`),
   KEY  (`ip`)
